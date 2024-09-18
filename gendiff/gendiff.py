@@ -1,11 +1,6 @@
 import argparse
-import json
-
-
-def parse_json_file(file_path):
-    """Парсит JSON файл и возвращает словарь."""
-    with open(file_path, 'r') as file:
-        return json.load(file)
+import os
+from gendiff.parser import parse_json_file, parse_yaml_file
 
 
 def format_value(value):
@@ -15,9 +10,18 @@ def format_value(value):
 
 
 def generate_diff(first_file, second_file):
-    """Функция для сравнения двух JSON файлов и вывода различий."""
-    first_data = parse_json_file(first_file)
-    second_data = parse_json_file(second_file)
+    first_ext = os.path.splitext(first_file)[1]
+    second_ext = os.path.splitext(second_file)[1]
+
+    if first_ext == '.json':
+        first_data = parse_json_file(first_file)
+    else:
+        first_data = parse_yaml_file(first_file)
+
+    if second_ext == '.json':
+        second_data = parse_json_file(second_file)
+    else:
+        second_data = parse_yaml_file(second_file)
 
     # Объединяем ключи из обоих файлов и сортируем их в алфавитном порядке
     all_keys = sorted(first_data.keys() | second_data.keys())
