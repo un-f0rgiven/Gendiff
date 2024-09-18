@@ -6,3 +6,6 @@ gendiff/__pycache__/gendiff.cpython-310.pyc
 gendiff/__pycache__/__init__.cpython-311.pyc
 gendiff/__pycache__/__init__.cpython-310.pyc
 test.py
+.coverage
+coverage.xml
+tests/__pycache__/test_main.cpython-310-pytest-8.3.3.pyc
