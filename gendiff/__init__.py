@@ -1,0 +1,1 @@
+from .gendiff import main, parse_json_file
