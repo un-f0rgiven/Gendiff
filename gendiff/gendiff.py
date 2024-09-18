@@ -1,17 +1,18 @@
 import argparse
 import json
-import os
+
 
 def parse_json_file(file_path):
     """Парсит JSON файл и возвращает словарь."""
     with open(file_path, 'r') as file:
         return json.load(file)
 
+
 def format_value(value):
-    """Форматирует значение для вывода: приводит булевы значения к нижнему регистру."""
     if isinstance(value, bool):
         return str(value).lower()
     return value
+
 
 def generate_diff(first_file, second_file):
     """Функция для сравнения двух JSON файлов и вывода различий."""
@@ -43,11 +44,12 @@ def generate_diff(first_file, second_file):
             diff_lines.append(f"+ {key}: {formatted_second_value}")
         # Если значения совпадают
         else:
-            diff_lines.append(f"  {key}: {formatted_first_value}")  # Вывод без знака, если значения равны
+            diff_lines.append(f"  {key}: {formatted_first_value}")
 
     # Собираем результат в фигурные скобки
     result = "{\n" + "\n".join(diff_lines) + "\n}"
     return result
+
 
 def main():
     parser = argparse.ArgumentParser(
@@ -55,24 +57,21 @@ def main():
     )
 
     # Позиционные аргументы
-    parser.add_argument('first_file', help='The first configuration file to compare')
-    parser.add_argument('second_file', help='The second configuration file to compare')
+    parser.add_argument('first_file')
+    parser.add_argument('second_file')
 
     # Необязательный аргумент
-    parser.add_argument('-f', '--format', default='plain', help='set format of output')
+    parser.add_argument('-f', '--format',
+                        default='plain', help='set format of output')
 
     # Парсинг аргументов
     args = parser.parse_args()
-
-    # Чтение и парсинг файлов
-    if not os.path.exists(args.first_file) or not os.path.exists(args.second_file):
-        print("Error: One or both files do not exist.")
-        return
 
     diffs = generate_diff(args.first_file, args.second_file)
 
     # Формируем и выводим результат
     print(diffs)
+
 
 if __name__ == '__main__':
     main()
