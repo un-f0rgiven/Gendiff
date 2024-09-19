@@ -10,7 +10,7 @@ def create_diff_node(key, status, value=None):
 
 def build_diff(file1, file2):
     """Сравниваем два словаря и возвращаем различия."""
-    diff = {}
+    diff = []  # Изменяем на список для хранения узлов
     all_keys = sorted(set(file1.keys()).union(file2.keys()))  # Объединяем все ключи из обоих файлов
 
     for key in all_keys:
@@ -19,18 +19,27 @@ def build_diff(file1, file2):
 
         if key in file1 and key not in file2:
             # Ключ есть в первом файле, но отсутствует во втором
-            diff[key] = create_diff_node(key, 'removed', value1)
+            diff.append(create_diff_node(key, 'removed', value1))
         elif key not in file1 and key in file2:
             # Ключ отсутствует в первом файле, но есть во втором
-            diff[key] = create_diff_node(key, 'added', value2)
+            diff.append(create_diff_node(key, 'added', value2))
         elif value1 == value2:
             # Ключи есть в обоих файлах и значения совпадают
-            diff[key] = create_diff_node(key, 'unchanged', value1)
+            diff.append(create_diff_node(key, 'unchanged', value1))
         else:
             # Ключи есть в обоих файлах, но значения различаются
-            diff[key] = create_diff_node(key, 'modified', (value1, value2))
+            if isinstance(value1, dict) and isinstance(value2, dict):
+                # Рекурсивно обрабатываем вложенные словари
+                child_diff = build_diff(value1, value2)
+                node = create_diff_node(key, 'modified')
+                node['children'] = child_diff
+                diff.append(node)
+            else:
+                # Регистрация изменений: одно значение как 'removed', другое как 'added'
+                diff.append(create_diff_node(key, 'removed', value1))
+                diff.append(create_diff_node(key, 'added', value2))
 
-    return diff
+    return diff  # Возвращаем список различий
 
 first_data = {
     "common": {
