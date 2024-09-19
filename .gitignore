@@ -11,3 +11,4 @@ tests/__pycache__/test_main.cpython-310-pytest-8.3.3.pyc
 tests/__pycache__/conftest.cpython-310-pytest-8.3.3.pyc
 tests/__pycache__/test_diff.cpython-310-pytest-8.3.3.pyc
 gendiff/__pycache__/parser.cpython-310.pyc
+gendiff/__pycache__/
