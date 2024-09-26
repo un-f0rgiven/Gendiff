@@ -17,7 +17,7 @@ def format_diff(diff, indent=1):
         elif status == 'removed':
             result.append(f"{indentation}- {key}: {value}" if not isinstance(value, dict) else f"{indentation}- {key}: {{")
             if isinstance(value, dict):
-                result.extend(build_diff(value, {}), indent + 2)
+                result.extend(format_diff(build_diff(value, {}), indent + 2))
                 result.append(f"{indentation}}}")
         elif status == 'modified':
             result.append(f"{indentation}  {key}: {{")
