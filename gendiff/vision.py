@@ -1,4 +1,5 @@
-from stylish import format_full_diff
+import json
+
 
 def create_diff_node(key, status, value=None):
     return {
@@ -10,96 +11,51 @@ def create_diff_node(key, status, value=None):
 
 def build_diff(file1, file2):
     """Сравниваем два словаря и возвращаем различия."""
-    diff = []  # Изменяем на список для хранения узлов
-    all_keys = sorted(set(file1.keys()).union(file2.keys()))  # Объединяем все ключи из обоих файлов
+    diff = []
+    all_keys = sorted(set(file1.keys()).union(file2.keys()))
 
     for key in all_keys:
-        value1 = file1.get(key)  # Получаем значение из первого файла
-        value2 = file2.get(key)  # Получаем значение из второго файла
+        value1 = file1.get(key)
+        value2 = file2.get(key)
 
         if key in file1 and key not in file2:
-            # Ключ есть в первом файле, но отсутствует во втором
             diff.append(create_diff_node(key, 'removed', value1))
         elif key not in file1 and key in file2:
-            # Ключ отсутствует в первом файле, но есть во втором
             diff.append(create_diff_node(key, 'added', value2))
         elif value1 == value2:
-            # Ключи есть в обоих файлах и значения совпадают
             diff.append(create_diff_node(key, 'unchanged', value1))
         else:
-            # Ключи есть в обоих файлах, но значения различаются
+            # Если оба значения являются словарями, рекурсивно обрабатываем их
             if isinstance(value1, dict) and isinstance(value2, dict):
-                # Рекурсивно обрабатываем вложенные словари
                 child_diff = build_diff(value1, value2)
-                node = create_diff_node(key, 'modified')
+                node = create_diff_node(key, 'modified', None)  # Устанавливаем значение в None
                 node['children'] = child_diff
                 diff.append(node)
             else:
-                # Регистрация изменений: одно значение как 'removed', другое как 'added'
+                # Если значения различаются и хотя бы одно из них не словарь
                 diff.append(create_diff_node(key, 'removed', value1))
                 diff.append(create_diff_node(key, 'added', value2))
 
-    return diff  # Возвращаем список различий
+    return diff
 
-first_data = {
-    "common": {
-        "setting1": "Value 1",
-        "setting2": 200,
-        "setting3": True,
-        "setting6": {
-            "key": "value",
-            "doge": {
-                "wow": ""
-            }
-        }
-    },
-    "group1": {
-        "baz": "bas",
-        "foo": "bar",
-        "nest": {
-            "key": "value"
-        }
-    },
-    "group2": {
-        "abc": 12345,
-        "deep": {
-            "id": 45
-        }
-    }
-}
 
-second_data = {
-    "common": {
-        "follow": False,
-        "setting1": "Value 1",
-        "setting3": None,
-        "setting4": "blah blah",
-        "setting5": {
-            "key5": "value5"
-        },
-        "setting6": {
-            "key": "value",
-            "ops": "vops",
-            "doge": {
-                "wow": "so much"
-            }
-        }
-    },
-    "group1": {
-        "foo": "bar",
-        "baz": "bars",
-        "nest": "str"
-    },
-    "group3": {
-        "deep": {
-            "id": {
-                "number": 45
-            }
-        },
-        "fee": 100500
-    }
-}
+# def load_json_file(file_path):
+#     """Загружает данные из JSON файла."""
+#     with open(file_path, 'r', encoding='utf-8') as f:
+#         return json.load(f)
 
-# Построение различий
-diff = build_diff(first_data, second_data)
-print(diff)
+# # Пример использования с файлами
+# file1_path = 'file1_r.json'
+# file2_path = 'file2_r.json'
+
+# # Подгружаем данные из файлов
+# data1 = load_json_file(file1_path)
+# data2 = load_json_file(file2_path)
+
+# # Получаем различия и форматируем их
+# diff = build_diff(data1, data2)
+
+# print(diff)
+
+
+# где file1_r.json: { "common": { "setting1": "Value 1", "setting2": 200, "setting3": true, "setting6": { "key": "value", "doge": { "wow": "" } } }, "group1": { "baz": "bas", "foo": "bar", "nest": { "key": "value" } }, "group2": { "abc": 12345, "deep": { "id": 45 } } } file2_r.json: { "common": { "follow": false, "setting1": "Value 1", "setting3": null, "setting4": "blah blah", "setting5": { "key5": "value5" }, "setting6": { "key": "value", "ops": "vops", "doge": { "wow": "so much" } } }, "group1": { "foo": "bar", "baz": "bars", "nest": "str" }, "group3": { "deep": { "id": { "number": 45 } }, "fee": 100500 } }
