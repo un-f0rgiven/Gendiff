@@ -1,30 +1,48 @@
 from vision import build_diff
 import json
 
-def format_diff(diff, indent=1):
+def create_indentation(depth, indent_space='    ', special_symbol=' '):
+    """Создает строку отступов в зависимости от уровня вложенности."""
+    indentation = (indent_space * depth) + (special_symbol + ' ' if depth > 0 else '')
+    return indentation
+
+def format_node(node, depth, indent_space):
+    """Рекурсивно форматирует узел и его значения с учетом вложенности."""
     result = []
+    current_indentation = create_indentation(depth, indent_space)
+
+    if isinstance(node, dict):
+        for key, value in node.items():
+            value_indentation = create_indentation(depth + 1, indent_space)
+
+            if isinstance(value, dict):
+                result.append(f"{value_indentation}{key}: {{")
+                result.extend(format_node(value, depth + 1, indent_space))
+                result.append(f"{value_indentation}}}")
+            else:
+                result.append(f"{value_indentation}{key}: {value}")
+    
+    return result
+
+def format_diff(diff, depth=0, indent_space='    '):
+    """Форматирует изменения, добавляя отступы для всех верхнеуровневых элементов со статусом 'added'."""
+    result = []
+
     for node in diff:
-        key = node['key']
-        status = node['status']
-        value = node.get('value')
-        indentation = '  ' * indent
-        
-        if status == 'added':
-            result.append(f"{indentation}+ {key}: {value}" if not isinstance(value, dict) else f"{indentation}+ {key}: {{")
-            if isinstance(value, dict):
-                result.extend(format_diff(build_diff({}, value), indent + 2))
-                result.append(f"{indentation}}}")
-        elif status == 'removed':
-            result.append(f"{indentation}- {key}: {value}" if not isinstance(value, dict) else f"{indentation}- {key}: {{")
-            if isinstance(value, dict):
-                result.extend(format_diff(build_diff(value, {}), indent + 2))
-                result.append(f"{indentation}}}")
-        elif status == 'modified':
-            result.append(f"{indentation}  {key}: {{")
-            result.extend(format_diff(node['children'], indent + 2))
-            result.append(f"{indentation}}}")
-        else:  # unchanged
-            result.append(f"{indentation}  {key}: {value}")
+        if depth == 0 and node['status'] == 'added':
+            result.append(f"+ {node['key']}: {{")
+            result.extend(format_node(node.get('value', {}), depth + 1, indent_space))
+            result.append(f"{create_indentation(depth)}}}")
+
+        if 'children' in node and node['children']:
+            result.extend(format_diff(node['children'], depth + 1, indent_space))
+        elif depth == 0 and node['status'] == 'removed':
+            result.append(f"- {node['key']}: {{")
+            result.extend(format_node(node.get('value', {}), depth + 1, indent_space))
+            result.append(f"{create_indentation(depth)}}}")
+
+        if 'children' in node and node['children']:
+            result.extend(format_diff(node['children'], depth + 1, indent_space))
 
     return result
 
@@ -43,8 +61,11 @@ data2 = load_json_file(file2_path)
 
 # Получаем различия и форматируем их
 diff = build_diff(data1, data2)
-result = format_diff(diff)
+formatted_result = format_diff(diff)
 
-print("{")
-print("\n".join(result))
-print("}")
+# print(diff)
+print('\n'.join(formatted_result))
+
+# print("{")
+# print("\n".join(result))
+# print("}")
