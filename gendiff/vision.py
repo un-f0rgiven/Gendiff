@@ -39,10 +39,10 @@ def build_diff(file1, file2):
     return diff
 
 
-# def load_json_file(file_path):
-#     """Загружает данные из JSON файла."""
-#     with open(file_path, 'r', encoding='utf-8') as f:
-#         return json.load(f)
+def load_json_file(file_path):
+    """Загружает данные из JSON файла."""
+    with open(file_path, 'r', encoding='utf-8') as f:
+        return json.load(f)
 
 # # Пример использования с файлами
 # file1_path = 'file1_r.json'
