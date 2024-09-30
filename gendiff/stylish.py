@@ -1,5 +1,3 @@
-from vision import build_diff
-import json
 
 
 def create_indentation(depth, indent_space=4):
@@ -85,22 +83,3 @@ def format_diff(diff, depth=0):
             result += f"{create_indentation(depth + 1)}  }}\n"
 
     return result
-
-def load_json_file(file_path):
-    """Загружает данные из JSON файла."""
-    with open(file_path, 'r', encoding='utf-8') as f:
-        return json.load(f)
-
-# Пример использования с файлами
-file1_path = 'file1_r.json'
-file2_path = 'file2_r.json'
-
-# Подгружаем данные из файлов
-data1 = load_json_file(file1_path)
-data2 = load_json_file(file2_path)
-
-# Получаем различия и форматируем их
-diff = build_diff(data1, data2)
-formatted_result = format_diff(diff)
-
-print(f'{{\n{formatted_result}}}')

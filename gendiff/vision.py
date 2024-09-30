@@ -1,4 +1,3 @@
-import json
 
 
 def create_diff_node(key, status, value=None):
@@ -45,26 +44,3 @@ def build_diff(file1, file2):
                 diff.append(create_diff_node(key, 'added', format_value(value2)))
 
     return diff
-
-
-
-def load_json_file(file_path):
-    """Загружает данные из JSON файла."""
-    with open(file_path, 'r', encoding='utf-8') as f:
-        return json.load(f)
-
-# # Пример использования с файлами
-# file1_path = 'file1_r.json'
-# file2_path = 'file2_r.json'
-
-# # Подгружаем данные из файлов
-# data1 = load_json_file(file1_path)
-# data2 = load_json_file(file2_path)
-
-# # Получаем различия и форматируем их
-# diff = build_diff(data1, data2)
-
-# print(diff)
-
-
-# где file1_r.json: { "common": { "setting1": "Value 1", "setting2": 200, "setting3": true, "setting6": { "key": "value", "doge": { "wow": "" } } }, "group1": { "baz": "bas", "foo": "bar", "nest": { "key": "value" } }, "group2": { "abc": 12345, "deep": { "id": 45 } } } file2_r.json: { "common": { "follow": false, "setting1": "Value 1", "setting3": null, "setting4": "blah blah", "setting5": { "key5": "value5" }, "setting6": { "key": "value", "ops": "vops", "doge": { "wow": "so much" } } }, "group1": { "foo": "bar", "baz": "bars", "nest": "str" }, "group3": { "deep": { "id": { "number": 45 } }, "fee": 100500 } }
