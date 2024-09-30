@@ -1,10 +1,11 @@
 
 
-def create_diff_node(key, status, value=None):
+def create_diff_node(key, status, old_value='null', new_value='null'):
     return {
         'key': key,
         'status': status,
-        'value': value,
+        'old_value': old_value,
+        'new_value': new_value,
         'children': []
     }
 
@@ -15,7 +16,6 @@ def format_value(value):
     elif value is None:
         return 'null'
     return value
-
 def build_diff(file1, file2):
     """Сравниваем два словаря и возвращаем различия."""
     diff = []
@@ -35,12 +35,11 @@ def build_diff(file1, file2):
             # Если оба значения являются словарями, рекурсивно обрабатываем их
             if isinstance(value1, dict) and isinstance(value2, dict):
                 child_diff = build_diff(value1, value2)
-                node = create_diff_node(key, 'modified', None)  # Устанавливаем значение в None
+                node = create_diff_node(key, 'updated')  # Устанавливаем значение в None
                 node['children'] = child_diff
                 diff.append(node)
             else:
                 # Если значения различаются и хотя бы одно из них не словарь
-                diff.append(create_diff_node(key, 'removed', format_value(value1)))
-                diff.append(create_diff_node(key, 'added', format_value(value2)))
+                diff.append(create_diff_node(key, 'updated', format_value(value1), format_value(value2)))
 
     return diff
