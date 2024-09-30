@@ -12,12 +12,14 @@ def format_value(value):
         return str(value).lower()
     return value
 
+
 def get_file_data(file_path):
     ext = os.path.splitext(file_path)[1]
     if ext == '.json':
         return parse_json_file(file_path)
     else:
         return parse_yaml_file(file_path)
+
 
 def format_diff_lines(all_keys, first_data, second_data):
     diff_lines = []
@@ -39,15 +41,13 @@ def format_diff_lines(all_keys, first_data, second_data):
 
     return diff_lines
 
+
 def generate_diff(first_file, second_file, format_name='stylish'):
     first_data = get_file_data(first_file)
     second_data = get_file_data(second_file)
     # all_keys = sorted(first_data.keys() | second_data.keys())
     diff = build_diff(first_data, second_data)
-    
-    # diff_lines = format_diff_lines(all_keys, first_data, second_data)
 
-    # Условно выбираем функцию формата на основе параметра format_name
     if format_name == 'stylish':
         result = format_diff(diff)  # Используем функцию для стильного формата
     elif format_name == 'plain':
@@ -55,27 +55,35 @@ def generate_diff(first_file, second_file, format_name='stylish'):
     elif format_name == 'json':
         result = print_changes_json(diff)
     else:
-        raise ValueError(f"Unknown format: {format_name}")  # Обработка ошибки для неизвестного формата
+        raise ValueError(f"Unknown format: {format_name}")
 
     return result
 
+
 def main():
-    parser = argparse.ArgumentParser(description='Compares two configuration files and shows a difference.')
-    
+    parser = argparse.ArgumentParser(
+        description='Compares two configuration files and shows a difference.'
+    )
+
     # Позиционные аргументы
     parser.add_argument('first_file')
     parser.add_argument('second_file')
-    
+
     # Необязательный аргумент (установим формат по умолчанию на 'stylish')
-    parser.add_argument('-f', '--format', default='stylish', help='set format of output')
-    
+    parser.add_argument(
+        '-f', '--format', default='stylish', help='set format of output'
+    )
+
     # Парсинг аргументов
     args = parser.parse_args()
-    
-    diffs = generate_diff(args.first_file, args.second_file, format_name=args.format)
-    
+
+    diffs = generate_diff(
+        args.first_file, args.second_file, format_name=args.format
+    )
+
     # Формируем и выводим результат
     print(diffs)
+
 
 if __name__ == '__main__':
     main()

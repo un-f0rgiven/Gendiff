@@ -1,5 +1,6 @@
 import json
 
+
 def format_changes_as_json(data):
     result = []
 
@@ -7,8 +8,12 @@ def format_changes_as_json(data):
         change = {
             'key': item['key'],
             'status': item['status'],
-            'old_value': item['old_value'] if item['old_value'] != 'null' else None,
-            'new_value': item['new_value'] if item['new_value'] != 'null' else None,
+            'old_value': (
+                item['old_value'] if item['old_value'] != 'null' else None
+            ),
+            'new_value': (
+                item['new_value'] if item['new_value'] != 'null' else None
+            ),
             'children': []
         }
 
@@ -19,6 +24,7 @@ def format_changes_as_json(data):
         result.append(change)
 
     return result
+
 
 def print_changes_json(data):
     changes = format_changes_as_json(data)
