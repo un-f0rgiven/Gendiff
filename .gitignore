@@ -12,3 +12,16 @@ tests/__pycache__/conftest.cpython-310-pytest-8.3.3.pyc
 tests/__pycache__/test_diff.cpython-310-pytest-8.3.3.pyc
 gendiff/__pycache__/parser.cpython-310.pyc
 gendiff/__pycache__/
+tests/__pycache__/conftest.cpython-310-pytest-8.2.2.pyc
+tests/__pycache__/conftest.cpython-310-pytest-8.2.2.pyc
+tests/__pycache__/test_vision.cpython-310-pytest-8.3.3.pyc
+tests/__pycache__/test_vision.cpython-310-pytest-8.2.2.pyc
+tests/__pycache__/test_stylish.cpython-310-pytest-8.3.3.pyc
+tests/__pycache__/test_stylish.cpython-310-pytest-8.2.2.pyc
+tests/__pycache__/test_plain.cpython-310-pytest-8.3.3.pyc
+tests/__pycache__/test_plain.cpython-310-pytest-8.2.2.pyc
+tests/__pycache__/test_parser.cpython-310-pytest-8.3.3.pyc
+tests/__pycache__/test_parser.cpython-310-pytest-8.2.2.pyc
+tests/__pycache__/test_flat.cpython-310-pytest-8.3.3.pyc
+tests/__pycache__/test_flat.cpython-310-pytest-8.2.2.pyc
+tests/__pycache__/conftest.cpython-310-pytest-8.2.2.pyc
