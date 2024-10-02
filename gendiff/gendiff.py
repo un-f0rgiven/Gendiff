@@ -5,6 +5,7 @@ from gendiff.stylish import format_diff
 from gendiff.vision import build_diff
 from gendiff.plain import print_changes
 from gendiff.json import print_changes_json
+from gendiff.test import test_diff
 
 
 def generate_diff(first_file, second_file, format_name='stylish'):
@@ -15,6 +16,8 @@ def generate_diff(first_file, second_file, format_name='stylish'):
 
     if format_name == 'stylish':
         result = format_diff(diff)
+    # elif format_name == 'test': # тестовый вывод
+    #     result = test_diff(diff)
     elif format_name == 'plain':
         result = print_changes(diff)
     elif format_name == 'json':

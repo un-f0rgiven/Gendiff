@@ -54,7 +54,7 @@ def handle_removed(child, depth):
     result = f"{create_indentation(depth + 1)}- {child['key']}: "
     if isinstance(child['old_value'], dict):
         result += "{\n"
-        result += format_value(child['value'], depth + 1)
+        result += format_value(child['old_value'], depth + 1)
         result += f"{create_indentation(depth + 1)}  }}\n"
     else:
         result += f"{child['old_value']}\n"
@@ -92,13 +92,14 @@ def handle_updated(child, depth):
         ) and isinstance(
             child['old_value'], str
         ):
+            result += (f"{create_indentation(depth + 1)}- "
+                       f"{child['key']}: {child['old_value']}\n")
             result += (f"{create_indentation(depth + 1)}+ "
                        f"{child['key']}: ")
             result += "{\n"
             result += format_value(child['new_value'], depth + 1)
             result += f"{create_indentation(depth + 1)}  }}\n"
-            result += (f"{create_indentation(depth + 1)}- "
-                       f"{child['key']}: {child['old_value']}\n")
+
         elif isinstance(
             child['old_value'], str
         ) and isinstance(
