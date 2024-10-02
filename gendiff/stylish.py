@@ -100,11 +100,7 @@ def handle_updated(child, depth):
             result += format_value(child['new_value'], depth + 1)
             result += f"{create_indentation(depth + 1)}  }}\n"
 
-        elif isinstance(
-            child['old_value'], str
-        ) and isinstance(
-            child['new_value'], str
-        ):
+        else:
             result += (f"{create_indentation(depth + 1)}- "
                        f"{child['key']}: {child['old_value']}\n")
             result += (f"{create_indentation(depth + 1)}+ "

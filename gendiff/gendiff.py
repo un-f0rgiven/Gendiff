@@ -16,7 +16,7 @@ def generate_diff(first_file, second_file, format_name='stylish'):
 
     if format_name == 'stylish':
         result = format_diff(diff)
-    # elif format_name == 'test': # тестовый вывод
+    # elif format_name == 'test':  # тестовый вывод
     #     result = test_diff(diff)
     elif format_name == 'plain':
         result = print_changes(diff)
