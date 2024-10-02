@@ -5,7 +5,7 @@ from gendiff.stylish import format_diff
 from gendiff.vision import build_diff
 from gendiff.plain import print_changes
 from gendiff.json import print_changes_json
-from gendiff.test import test_diff
+# from gendiff.test import test_diff
 
 
 def generate_diff(first_file, second_file, format_name='stylish'):
