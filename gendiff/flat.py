@@ -30,6 +30,6 @@ def format_diff_lines(first_data, second_data):
 def print_diff_lines(first_data, second_data):
     formatted_changes = format_diff_lines(first_data, second_data)
     if formatted_changes:
-        results = "\n".join(formatted_changes)  # Создаем результирующую строку
+        results = "\n".join(formatted_changes)
         return f"{{\n{results}\n}}"
-    return "{}"  # Возвращаем пустой словарь, если изменений нет
+    return "{}"

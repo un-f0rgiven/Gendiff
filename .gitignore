@@ -4,7 +4,5 @@ test.py
 .coverage
 coverage.xml
 __pycache__/
+files/
 *.pyc
-
-test_h1.yml
-test_h2.yml

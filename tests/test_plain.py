@@ -33,7 +33,6 @@ def test_format_changes():
 
     assert format_changes(data_unchanged) == []
 
-    # Nested properties
     nested_data = [{
         'key': 'property1',
         'status': 'added',

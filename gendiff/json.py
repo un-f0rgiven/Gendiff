@@ -17,7 +17,6 @@ def format_changes_as_json(data):
             'children': []
         }
 
-        # Рекурсивно добавляем дочерние элементы, если они существуют
         if item['children']:
             change['children'] = format_changes_as_json(item['children'])
 
@@ -28,4 +27,4 @@ def format_changes_as_json(data):
 
 def print_changes_json(data):
     changes = format_changes_as_json(data)
-    return json.dumps(changes, indent=4)  # Преобразуем в JSON с отступами
+    return json.dumps(changes, indent=4)

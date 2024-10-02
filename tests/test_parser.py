@@ -19,24 +19,20 @@ def test_file1_yaml_(tmp_path):
 
 
 def test_parse_json_file(test_file1_json):
-    # Проверяем парсинг JSON файла с использованием временного файла
     result = parse_json_file(test_file1_json)
     assert result == {"key": "value"}
 
 
 def test_parse_yaml_file(test_file1_yaml_):
-    # Проверяем парсинг YAML файла с использованием временного файла
     result = parse_yaml_file(test_file1_yaml_)
     assert result == {"key": "value"}
 
 
 def test_get_file_data_json(test_file1_json):
-    # Проверяем загрузку JSON данных
     result = get_file_data(test_file1_json)
     assert result == {"key": "value"}
 
 
 def test_get_file_data_yaml(test_file1_yaml_):
-    # Проверяем загрузку YAML данных
     result = get_file_data(test_file1_yaml_)
     assert result == {"key": "value"}

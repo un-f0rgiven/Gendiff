@@ -4,9 +4,6 @@ install:
 test:
 	poetry run pytest
 
-gen-diff:
-	poetry run gendiff -h
-
 build: check
 	poetry build
 
@@ -14,7 +11,7 @@ publish:
 	poetry publish --dry-run
 
 package-install:
-	python3 -m pip install --user dist/*.whl --force-reinstall
+	python3 -m pip install dist/*.whl --force-reinstall
 
 test-coverage:
 	poetry run pytest --cov=gendiff --cov-report xml

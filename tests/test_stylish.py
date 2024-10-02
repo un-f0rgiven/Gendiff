@@ -3,10 +3,8 @@ from gendiff.vision import build_diff
 
 
 def test_format_diff_with_json(test_file1_r_json, test_file2_r_json):
-    # Создаем разницу между двумя конфигурациями
     diff = build_diff(test_file1_r_json, test_file2_r_json)
 
-    # Ожидаемый результат в строковом формате
     expected_result = (
         "{\n"
         "    common: {\n"
@@ -54,15 +52,12 @@ def test_format_diff_with_json(test_file1_r_json, test_file2_r_json):
         "}"
     )
 
-    # Сравниваем результат функции format_diff с ожидаемым результатом
     assert format_diff(diff) == expected_result
 
 
 def test_format_diff_with_yaml(test_file1_r_yaml, test_file2_r_yaml):
-    # Создаем разницу между двумя конфигурациями
     diff = build_diff(test_file1_r_yaml, test_file2_r_yaml)
 
-    # Ожидаемый результат в строковом формате
     expected_result = (
         "{\n"
         "    common: {\n"
@@ -110,5 +105,4 @@ def test_format_diff_with_yaml(test_file1_r_yaml, test_file2_r_yaml):
         "}"
     )
 
-    # Сравниваем результат функции format_diff с ожидаемым результатом
     assert format_diff(diff) == expected_result

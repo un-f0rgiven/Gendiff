@@ -1,5 +1,4 @@
 def create_indentation(depth, indent_space=4):
-    """Создает строку отступов в зависимости от уровня вложенности."""
     return ' ' * (depth * indent_space - 2)
 
 
@@ -20,10 +19,8 @@ def format_value(node, depth):
 
 
 def format_children(children, depth):
-    """Форматирует детей узла и возвращает строку с результатом."""
     result = ""
 
-    # Создаем сопоставление статусов и обработчиков.
     handlers = {
         'added': handle_added,
         'removed': handle_removed,

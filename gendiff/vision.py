@@ -9,7 +9,6 @@ def create_diff_node(key, status, old_value='null', new_value='null'):
 
 
 def format_value(value):
-    """Приведение значений к нужному формату."""
     if isinstance(value, bool):
         return 'true' if value else 'false'
     elif value is None:
@@ -18,7 +17,6 @@ def format_value(value):
 
 
 def build_diff(file1, file2):
-    """Сравниваем два словаря и возвращаем различия."""
     diff = []
     all_keys = sorted(set(file1.keys()).union(file2.keys()))
 
@@ -35,14 +33,12 @@ def build_diff(file1, file2):
                 create_diff_node(key, 'unchanged', format_value(value1))
             )
         else:
-            # Если оба значения являются словарями, рекурсивно обрабатываем их
             if isinstance(value1, dict) and isinstance(value2, dict):
                 child_diff = build_diff(value1, value2)
                 node = create_diff_node(key, 'updated')
                 node['children'] = child_diff
                 diff.append(node)
             else:
-                # Если значения различаются и хотя бы одно из них не словарь
                 diff.append(
                     create_diff_node(
                         key, 'updated', format_value(
