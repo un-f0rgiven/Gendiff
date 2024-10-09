@@ -22,6 +22,8 @@ Python 3.9 и выше
 *make package-install*
 Удаление производится через команду:
 *make package-uninstall*
+Тестирование производится через команду:
+*make test*
 Запуск производится через команду:
 *gendiff [-h] [-f FORMAT] first_file second_file*
 
