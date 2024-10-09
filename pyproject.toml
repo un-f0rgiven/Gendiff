@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "hexlet-code"
 version = "0.1.0"
-description = ""
+description = "A simple utility to generate file differences"
 authors = ["un-f0rgiven <barr85@mail.ru>"]
 readme = "README.md"
 packages = [

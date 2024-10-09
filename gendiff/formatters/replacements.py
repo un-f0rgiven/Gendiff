@@ -4,6 +4,7 @@ replacements = {
     None: 'null'
 }
 
+
 def replace_values(formatted_output, replacements):
     for old_value, new_value in replacements.items():
         # Заменяем старое значение на новое

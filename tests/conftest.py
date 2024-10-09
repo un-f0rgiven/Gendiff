@@ -5,6 +5,7 @@ import os
 
 FIXTURES_PATH = 'tests/fixtures/'
 
+
 @pytest.fixture
 def test_file1_json():
     config_file_path = os.path.join(
@@ -84,15 +85,18 @@ def test_file2_r_yaml():
         data = yaml.safe_load(f)
     return data
 
+
 @pytest.fixture
 def stylish_format_result():
     with open(os.path.join(FIXTURES_PATH, 'stylish_format.txt'), 'r') as f:
         return f.read().strip()
 
+
 @pytest.fixture
 def plain_format_result():
     with open(os.path.join(FIXTURES_PATH, 'plain_format.txt'), 'r') as f:
         return f.read().strip()
+
 
 @pytest.fixture
 def json_format_result():

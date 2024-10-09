@@ -28,7 +28,7 @@ def format_changes(data, parent_key=''):
         status = item['status']
         if status in handlers:
             change_message = handlers[status](item, current_key)
-            if change_message:  # Добавляем только если change_message не пустая строка
+            if change_message:
                 result.append(change_message)
 
         if item.get('children'):
@@ -48,7 +48,7 @@ def handle_removed(item, current_key):
 
 
 def handle_unchanged(item, current_key):
-    return ''  # Возвращаем пустую строку
+    return ''
 
 
 def handle_updated(item, current_key):
@@ -62,7 +62,7 @@ def handle_updated(item, current_key):
     return ''  # Возвращаем пустую строку
 
 
-def print_changes(data):
+def return_plain_format(data):
     formatted_diff = format_changes(data)
     formatted_data = '\n'.join(formatted_diff)
     output = replace_values(formatted_data, replacements=replacements)
