@@ -1,14 +1,8 @@
-from gendiff.formatters.replacements import replace_values, replacements
-
-
 def create_indentation(depth, indent_space=4):
     return ' ' * (depth * indent_space - 2)
 
 
 def format_value(node, depth):
-# открывающая скобка используется только для форматирования значений типа dict
-# По аналогии с предыдущим модулем в этой функции будет правильнее реализовать 
-# логику приведения всех возможных типов значений (включая тип dict) нод к строке.
     result = []
 
     if isinstance(node, dict):
@@ -20,7 +14,8 @@ def format_value(node, depth):
                 result.append(format_value(value, depth + 1))
                 result.append(f"{create_indentation(depth + 1)}  }}")
             else:
-                result.append(f"{value_indentation}  {key}: {value}")
+                formatted_value = format_value(value, 0) if isinstance(value, dict) else str(value)
+                result.append(f"{value_indentation}  {key}: {formatted_value}")
 
     return result
 
@@ -112,7 +107,6 @@ def handle_nested(child, depth):
 
 
 def format_diff(diff, depth=0):
-# не описан тип 'updated'
     result = []
 
     for node in diff:
@@ -120,30 +114,36 @@ def format_diff(diff, depth=0):
         key = node['key']
         indentation = create_indentation(depth + 1)
 
-        if status in ('added', 'removed'):
-        # разделить логику на отдельные ветки 'added' и 'removed'
-            result.append(f"{indentation}"
-                          f"{'+' if status == 'added' else '-'} {key}: {{")
-                        # Открывающая скобка используется только для форматирования значений типа dict.
+        if status == 'added':
+            result.append(f"{indentation}+ {key}: ")
             result.append(format_value(node['old_value'], depth + 1))
-            result.append(f"{indentation}  }}")
+
+        elif status == 'removed':
+            result.append(f"{indentation}- {key}: ")
+            result.append(format_value(node['old_value'], depth + 1))
 
         elif status == 'unchanged':
-            result.append(f"{indentation}  {key}: {{")
+            result.append(f"{indentation}  {key}: ")
             result.append(format_value(node['old_value'], depth + 1))
-            result.append(f"{create_indentation(depth)} }}")
-
+        
+        elif status == 'updated':
+            result.append(f"{indentation}  {key}: ")
+            result.append(format_value(node['new_value'], depth + 1))
+            result.append(format_value(node['old_value'], depth + 1))
+        
         elif status == 'nested':
             result.append(f"{indentation}  {key}: {{")
-            result.append(format_children(node['children'], depth + 1))
+            result.append(format_diff(node['children'], depth + 1))
             # Так как diff является деревом, то и обработку ноды типа nested нужно выполнять 
             # при помощи рекурсивного вызова format_diff – таким образом количество кода в 
             # этом модуле значительно сократится.
             result.append(f"{indentation}  }}")
 
+        else:
+            raise ValueError(f'Недопустимый тип: {status}')
+
     return result
-    # По аналогии с plain, в случае, если значение ноды оказалось равно недопустимому значению, 
-    # форматтер должен выбросить исключение ValueError.
+
 
 def format_data(data):
     if isinstance(data, list):
@@ -160,6 +160,6 @@ def format_data(data):
 def return_stylish_format(data):
     formatted_diff = format_diff(data)
     formatted_data = format_data(formatted_diff)
-    output = replace_values(formatted_data, replacements=replacements)
+    
+    return f'{{\n{formatted_data}\n}}'
 
-    return f'{{\n{output}\n}}'
