@@ -1,5 +1,5 @@
 def format_value(value):
-    
+
     if value is None:
         return "null"
     elif isinstance(value, bool):
@@ -13,16 +13,19 @@ def format_value(value):
 
 
 def handle_added(item, current_key):
+
     value = item['old_value'] if item['old_value'] != 'null' else None
     return (f"Property '{current_key}' was added "
             f"with value: {format_value(value)}")
 
 
 def handle_removed(item, current_key):
+
     return f"Property '{current_key}' was removed"
 
 
 def handle_unchanged(item, current_key):
+
     return ''
 
 
@@ -37,15 +40,16 @@ def handle_updated(item, current_key):
 
 
 def handle_nested(item, current_key):
+
     return ''
 
 
 HANDLERS = {
-        'added': handle_added,
-        'removed': handle_removed,
-        'updated': handle_updated,
-        'unchanged': handle_unchanged,
-        'nested': handle_nested
+    'added': handle_added,
+    'removed': handle_removed,
+    'updated': handle_updated,
+    'unchanged': handle_unchanged,
+    'nested': handle_nested
 }
 
 

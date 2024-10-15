@@ -1,109 +1,49 @@
+def create_symbol_indentation(depth, indent_space=4, symbol=2):
+    return ' ' * (depth * indent_space - symbol)
+
+
 def create_indentation(depth, indent_space=4):
-    return ' ' * (depth * indent_space - 2)
+    return ' ' * (depth * indent_space)
 
 
-def format_value(node, depth):
+def formatted_value(value):
+    if value is None:
+        return "null"
+    elif isinstance(value, bool):
+        return "true" if value else "false"
+    else:
+        return str(value)
+
+
+def format_value(node, depth=0):
     result = []
+
+    if not isinstance(node, dict):
+        return formatted_value(node)
 
     if isinstance(node, dict):
         for key, value in node.items():
-            value_indentation = create_indentation(depth + 1)
+            indentation = create_indentation(depth + 1)
 
             if isinstance(value, dict):
-                result.append(f"{value_indentation}  {key}: {{")
+                result.append(f"{indentation}{key}: {{")
                 result.append(format_value(value, depth + 1))
-                result.append(f"{create_indentation(depth + 1)}  }}")
+                result.append(f"{indentation}}}")
             else:
-                formatted_value = format_value(value, 0) if isinstance(value, dict) else str(value)
-                result.append(f"{value_indentation}  {key}: {formatted_value}")
+                result.append(f"{indentation}{key}: {formatted_value(value)}")
 
-    return result
-
-
-def format_children(children, depth):
-    result = []
-
-    handlers = {
-        'added': handle_added,
-        'removed': handle_removed,
-        'unchanged': handle_unchanged,
-        'updated': handle_updated,
-        'nested': handle_nested,
-    }
-
-    for child in children:
-        status = child['status']
-        if status in handlers:
-            result.append(handlers[status](child, depth))
-
-    return result
+    return '\n'.join(result)
 
 
-def handle_value(child, depth, symbol, value):
-    result = []
-
-    if isinstance(child[value], dict):
-        result.append(f"{create_indentation(depth + 1)}"
-                      f"{symbol} {child['key']}: {{")
-        result.extend(format_value(child[value], depth + 1))
-        result.append(f"{create_indentation(depth + 1)}  }}")
+def add_value(result, symbol_indentation, key, value, prefix, depth):
+    if isinstance(value, dict):
+        result.append(f"{symbol_indentation}{prefix} {key}: {{")
+        result.append(format_value(value, depth + 1))
+        result.append(f"{create_indentation(depth + 1)}}}")
     else:
-        result.append(f"{create_indentation(depth + 1)}"
-                      f"{symbol} {child['key']}: {child[value]}")
-
-    return result
-
-
-def handle_added(child, depth, value='old_value', symbol='+'):
-    return handle_value(child, depth, symbol, value)
-
-
-def handle_removed(child, depth, value='old_value', symbol='-'):
-    return handle_value(child, depth, symbol, value)
-
-
-def handle_unchanged(child, depth, value='old_value', symbol=' '):
-    return handle_value(child, depth, symbol, value)
-
-
-def handle_updated(child, depth):
-    result = []
-
-    result.append(handle_removed(child, depth, 'old_value', '-'))
-    result.append(handle_added(child, depth, 'new_value', '+'))
-    return result
-
-
-def handle_nested(child, depth):
-    result = []
-    indentation = create_indentation(depth + 1)
-
-    if not child['children']:
-        if isinstance(child['old_value'], dict):
-            result.append(f"{indentation}- {child['key']}: ")
-            result.append("{\n")
-            result.append(format_value(child['old_value'], depth + 1))
-            result.append(f"{indentation}  }}\n")
-            result.append(f"{indentation}+ "
-                          f"{child['key']}: {child['new_value']}\n")
-        elif isinstance(child['new_value'], dict):
-            result.append(f"{indentation}- "
-                          f"{child['key']}: {child['old_value']}\n")
-            result.append(f"{indentation}+ {child['key']}: ")
-            result.append("{\n")
-            result.append(format_value(child['new_value'], depth + 1))
-            result.append(f"{indentation}  }}\n")
-        else:
-            result.append(f"{indentation}- "
-                          f"{child['key']}: {child['old_value']}\n")
-            result.append(f"{indentation}+ "
-                          f"{child['key']}: {child['new_value']}\n")
-    else:
-        result.append(f"{indentation}  {child['key']}: {{")
-        result.append(format_children(child['children'], depth + 1))
-        result.append(f"{indentation}  }}")
-
-    return result
+        result.append(
+            f"{symbol_indentation}{prefix} {key}: {formatted_value(value)}"
+        )
 
 
 def format_diff(diff, depth=0):
@@ -112,54 +52,33 @@ def format_diff(diff, depth=0):
     for node in diff:
         status = node['status']
         key = node['key']
+        children = node.get('children', None)
+        old_value = node.get('old_value', None)
+        new_value = node.get('new_value', None)
+
         indentation = create_indentation(depth + 1)
+        symbol_indentation = create_symbol_indentation(depth + 1)
 
         if status == 'added':
-            result.append(f"{indentation}+ {key}: ")
-            result.append(format_value(node['old_value'], depth + 1))
-
+            add_value(result, symbol_indentation, key, old_value, '+', depth)
         elif status == 'removed':
-            result.append(f"{indentation}- {key}: ")
-            result.append(format_value(node['old_value'], depth + 1))
-
+            add_value(result, symbol_indentation, key, old_value, '-', depth)
         elif status == 'unchanged':
-            result.append(f"{indentation}  {key}: ")
-            result.append(format_value(node['old_value'], depth + 1))
-        
+            add_value(result, symbol_indentation, key, old_value, ' ', depth)
         elif status == 'updated':
-            result.append(f"{indentation}  {key}: ")
-            result.append(format_value(node['new_value'], depth + 1))
-            result.append(format_value(node['old_value'], depth + 1))
-        
+            add_value(result, symbol_indentation, key, old_value, '-', depth)
+            add_value(result, symbol_indentation, key, new_value, '+', depth)
         elif status == 'nested':
-            result.append(f"{indentation}  {key}: {{")
-            result.append(format_diff(node['children'], depth + 1))
-            # Так как diff является деревом, то и обработку ноды типа nested нужно выполнять 
-            # при помощи рекурсивного вызова format_diff – таким образом количество кода в 
-            # этом модуле значительно сократится.
-            result.append(f"{indentation}  }}")
-
+            result.append(f"{symbol_indentation}  {key}: {{")
+            result.append(format_diff(children, depth + 1))
+            result.append(f"{indentation}}}")
         else:
             raise ValueError(f'Недопустимый тип: {status}')
 
-    return result
-
-
-def format_data(data):
-    if isinstance(data, list):
-        result = []
-        for item in data:
-            result.append(format_data(item))
-        return '\n'.join(result)
-    elif isinstance(data, str):
-        return data
-    else:
-        return str(data)
+    return '\n'.join(result)
 
 
 def return_stylish_format(data):
-    formatted_diff = format_diff(data)
-    formatted_data = format_data(formatted_diff)
-    
-    return f'{{\n{formatted_data}\n}}'
+    formatted_data = format_diff(data)
 
+    return f'{{\n{formatted_data}\n}}'

@@ -17,7 +17,7 @@ def parse_file_content(file_extension, content):
     elif file_extension == '.yaml' or file_extension == '.yml':
         return parse_yaml(content)
     else:
-        raise ValueError(f"Unknown format file: {file_extension}")
+        raise ValueError(f"Неподдерживаемый формат файла: {file_extension}")
 
 
 def get_file_data(file_path):

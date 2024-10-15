@@ -26,5 +26,6 @@ def format_changes_as_json(data):
 
 
 def return_json_format(data):
+
     formatted_diff = format_changes_as_json(data)
     return json.dumps(formatted_diff, indent=4)
