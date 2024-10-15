@@ -2,6 +2,7 @@ from gendiff.formatters.replacements import replace_values, replacements
 
 
 def format_value(value):
+# форматировать все значения через эту функцию. Сейчас здесь не хватает логики форматирования bool и None
     if isinstance(value, dict):
         return "[complex value]"
     elif isinstance(value, str):
@@ -14,6 +15,11 @@ def format_changes(data, parent_key=''):
     result = []
 
     handlers = {
+    # handlers будет правильнее объявить как константу в этом модуле, так как значение этой переменной не зависит от контекста.
+
+    # Так как поле children бывает только у типа ноды nested, то будет правильнее выделить отдельный handler для этого типа ноды.
+    
+    # В случае, если тип ноды оказался равен недопустимому значению, форматтер должен выбросить исключение ValueError.
         'added': handle_added,
         'removed': handle_removed,
         'updated': handle_updated,
@@ -52,6 +58,10 @@ def handle_unchanged(item, current_key):
 
 
 def handle_updated(item, current_key):
+# Для ноды вида {"old_value": None, "new_value": "null"} эта функция вернет 
+# пустую строку. Правильнее будет форматировать все значения нод только при 
+# помощи format_value (без использования replace_values) – сейчас в этой 
+# функции не хватает логики форматирования типов bool и None.
     old_value = item['old_value'] if item['old_value'] != 'null' else None
     new_value = item['new_value'] if item['new_value'] != 'null' else None
 
@@ -59,12 +69,13 @@ def handle_updated(item, current_key):
         return (f"Property '{current_key}' was updated. "
                 f"From {format_value(old_value)} "
                 f"to {format_value(new_value)}")
-    return ''  # Возвращаем пустую строку
+    return ''
 
 
 def return_plain_format(data):
     formatted_diff = format_changes(data)
     formatted_data = '\n'.join(formatted_diff)
     output = replace_values(formatted_data, replacements=replacements)
+    # не использовать replace_values
 
     return output
